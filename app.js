@@ -24,7 +24,6 @@ app.get("/users/:id", async (req, res) => {
 });
 
 app.post("/users", async (req, res) => {
-  console.log(req.body);
   const user = await prisma.user.create({ data: req.body });
   res.status(201).send(user);
 });
@@ -44,6 +43,44 @@ app.delete("/users/:id", async (req, res) => {
     where: { id },
   });
   req.send("Success delete");
+});
+
+// products
+
+app.get("/products", async (req, res) => {
+  const products = await prisma.product.findMany();
+  res.send(products);
+});
+
+app.get("/products/:id", async (req, res) => {
+  const { id } = req.params;
+  // Destructuring assignment
+  const product = await prisma.product.findUnique({
+    where: { id },
+  });
+  res.send(product);
+});
+
+app.post("/products", async (req, res) => {
+  const product = await prisma.product.create({ data: req.body });
+  res.send(product);
+});
+
+app.patch("/products/:id", async (req, res) => {
+  const { id } = req.params;
+  const product = await prisma.product.update({
+    where: { id },
+    data: req.body,
+  });
+  res.send(product);
+});
+
+app.delete("/products/:id", async (req, res) => {
+  const { id } = req.params;
+  await prisma.product.delete({
+    where: { id },
+  });
+  req.sendStatus(204);
 });
 
 app.listen(process.env.PORT || 3000, () =>

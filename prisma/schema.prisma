@@ -19,6 +19,30 @@ model User {
   firstName String
   lastName  String
   address   String
+  age       Int?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  category    Category
+  price       Float
+  stock       Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum Category {
+  FASHION
+  BEAUTY
+  SPORTS
+  ELECTRONICS
+  HOME_INTERIOR
+  HOUSEHOLD_SUPPLIES
+  KICCHENWARE
+}
+
+// 우리가 정의한 값만 들어가야 할 때! (보통 대문자 사용)
