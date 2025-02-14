@@ -9,8 +9,24 @@ const prisma = new PrismaClient();
 const app = express();
 app.use(express.json());
 
+// users
 app.get("/users", async (req, res) => {
-  const users = await prisma.user.findMany();
+  const { offset = 0, limit = 10, order = "newest" } = req.query;
+  let orderBy;
+  switch (order) {
+    case "oldset":
+      orderBy = { createdAt: "asc" };
+      break;
+    case "newest":
+      orderBy = { createdAt: "desc" };
+    default:
+      orderBy = { createdAt: "desc" };
+  } // switch 조건문
+  const users = await prisma.user.findMany({
+    orderBy: orderBy,
+    skip: parseInt(offset),
+    take: parseInt(limit),
+  });
   res.send(users);
 }); // await 는 async 를 써야 호출 가능!
 
@@ -42,13 +58,34 @@ app.delete("/users/:id", async (req, res) => {
   await prisma.user.delete({
     where: { id },
   });
-  req.send("Success delete");
+  res.send("Success delete");
 });
 
 // products
-
 app.get("/products", async (req, res) => {
-  const products = await prisma.product.findMany();
+  const { offset = 0, limit = 10, order = "newest", category } = req.query;
+  let orderBy;
+  switch (order) {
+    case "priceLowest":
+      orderBy = { price: "asc" };
+      break;
+    case "priceHighest":
+      orderBy = { price: "desc" };
+      break;
+    case "oldest":
+      orderBy = { price: "asc" };
+      break;
+    case "newest":
+      orderBy = { price: "desc" };
+    default:
+      orderBy = { price: "desc" };
+  }
+  const products = await prisma.product.findMany({
+    where: where,
+    orderBy,
+    skip: parseInt(offset),
+    take: parseInt(limit),
+  });
   res.send(products);
 });
 
